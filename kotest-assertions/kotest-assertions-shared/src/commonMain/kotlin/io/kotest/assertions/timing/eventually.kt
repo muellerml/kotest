@@ -148,11 +148,18 @@ suspend fun <T> eventually(
    throw failure(message.toString())
 }
 
+object GlobalEventuallyConfig {
+   var duration: Duration = Duration.INFINITE
+   var interval: Interval = 25.milliseconds.fixed()
+   var retries: Int = Int.MAX_VALUE
+   var exceptionClass: KClass<out Throwable>? = Throwable::class
+}
+
 data class EventuallyConfig(
-   val duration: Duration = Duration.INFINITE,
-   val interval: Interval = 25.milliseconds.fixed(),
-   val retries: Int = Int.MAX_VALUE,
-   val exceptionClass: KClass<out Throwable>? = Throwable::class,
+   val duration: Duration = GlobalEventuallyConfig.duration,
+   val interval: Interval = GlobalEventuallyConfig.interval,
+   val retries: Int = GlobalEventuallyConfig.retries,
+   val exceptionClass: KClass<out Throwable>? = GlobalEventuallyConfig.exceptionClass,
 ) {
    init {
       require(retries > 0) { "Retries should not be less than one" }
